@@ -5,21 +5,20 @@ from downloader import download_file
 from logger import log_data
 
 # Stable server
-HOST = "speed.cloudflare.com"
-PORT = 443
-PATH = "/__down?bytes=5000000"
-
+HOST = "speedtest.tele2.net"
+PORT = 80
+PATH = "/1MB.zip"
 def run():
     try:
         file_size, time_taken, speed = download_file(HOST, PORT, PATH)
 
-        speed_mb = speed / (1024 * 1024)
+        speed_kb = speed / (1024)
 
         print(f"Downloaded: {file_size} bytes")
         print(f"Time: {time_taken:.2f} sec")
-        print(f"Speed: {speed_mb:.2f} MB/s")
+        print(f"Speed: {speed_kb:.2f} KB/s")
 
-        log_data(file_size, time_taken, speed_mb)
+        log_data(file_size, time_taken, speed_kb)
 
     except Exception as e:
         print("Error:", e)
@@ -30,4 +29,4 @@ while(1):
     i += 1
     run()
 
-    time.sleep(5)  # 1 minute (change to 3600 for real)
+    time.sleep(5)  

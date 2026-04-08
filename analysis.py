@@ -7,22 +7,22 @@ df = pd.read_csv("log.csv", names=["timestamp", "size", "time", "speed"])
 
 df["timestamp"] = pd.to_datetime(df["timestamp"])
 df["hour"] = df["timestamp"].dt.hour
-df["speed_mb"] = df["speed"] 
+df["speed_kb"] = df["speed"] 
 
 print("\n===== STATISTICS =====")
-print("Average Speed:", df["speed_mb"].mean(), "MB/s")
-print("Max Speed:", df["speed_mb"].max(), "MB/s")
-print("Min Speed:", df["speed_mb"].min(), "MB/s")
+print("Average Speed:", df["speed_kb"].mean(), "KB/s")
+print("Max Speed:", df["speed_kb"].max(), "KB/s")
+print("Min Speed:", df["speed_kb"].min(), "KB/s")
 
-hourly = df.groupby("hour")["speed_mb"].mean()
+hourly = df.groupby("hour")["speed_kb"].mean()
 busiest_hour = hourly.idxmin()
 
 print("Busiest Hour (slowest):", busiest_hour)
 
 # Plot graph
-plt.plot(df["timestamp"], df["speed_mb"], marker='o')
+plt.plot(df["timestamp"], df["speed_kb"], marker='o')
 plt.xlabel("Time")
-plt.ylabel("Speed (MB/s)")
+plt.ylabel("Speed (kB/s)")
 plt.title("Download Speed Over Time")
 plt.xticks(rotation=45)
 plt.tight_layout()

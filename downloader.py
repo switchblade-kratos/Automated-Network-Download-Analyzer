@@ -5,12 +5,12 @@ import time
 def download_file(host, port, path):
     # Create TCP connection
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1024 * 1024)
     sock.connect((host, port))
 
     # Wrap with SSL (HTTPS)
     context = ssl.create_default_context()
-    secure_sock = context.wrap_socket(sock, server_hostname=host)
-
+    secure_sock = sock
     # Create HTTP GET request
     request = f"GET {path} HTTP/1.1\r\nHost: {host}\r\nConnection: close\r\n\r\n"
 
@@ -21,23 +21,19 @@ def download_file(host, port, path):
     secure_sock.sendall(request.encode())
 
     # Receive data
-    total_data = b""
+    total_data = 0
     while True:
-        data = secure_sock.recv(4096)
+        data = secure_sock.recv(65536)
         if not data:
             break
-        total_data += data
+        total_data += len(data)
 
     # End time
     end_time = time.time()
     secure_sock.close()
 
-    # Remove HTTP headers
-    header_end = total_data.find(b"\r\n\r\n") + 4
-    body = total_data[header_end:]
 
-    # Calculate metrics
-    file_size = len(body)
+    file_size = total_data
     time_taken = end_time - start_time
     speed = file_size / time_taken if time_taken > 0 else 0
 
